@@ -1,0 +1,21 @@
+{% extends 'index.html' %}
+{% load bootstrap %}
+{% block content %}
+    <div class="col-xl-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-chart-bar me-1"></i>
+                Zaproponuj film do obejrzenia
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {{ form|bootstrap }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Zatwierdź</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

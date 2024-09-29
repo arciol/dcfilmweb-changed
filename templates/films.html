@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Films</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: lightblue;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.ajax-form').on('submit', function(event) {
+                event.preventDefault();
+        
+                var form = $(this);
+                var card = form.closest('.card');
+        
+                $.ajax({
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    data: form.serialize(),
+                    success: function(response) {
+                        // Update the average rating on the page
+                        card.find('.average-rating').text('Average rating: ' + response.new_average_rating);
+                    },
+                    error: function(response) {
+                        // Handle an error
+                        alert('An error occurred');
+                    }
+                });
+            });
+        
+            $('.ajax-form-watch').on('submit', function(event) {
+                event.preventDefault();
+
+                var form = $(this);
+                var card = form.closest('.card');
+        
+                $.ajax({
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    data: form.serialize(),
+                    success: function(response) {
+                        // Display a success message
+                        card.find('.users-want-to-watch').text('Users who want to watch: ' + response.users_want_to_watch.join(', '));
+                        
+                        // Update the watchlist
+                        var watchlist = $('#watchlist');
+                        watchlist.empty();
+                        $.each(response.watchlist, function(i, film) {
+                            watchlist.append('<div class="card">' +
+                                '<h5 class="card-title">' + film.title + '</h5>' +
+                                '<h6 class="card-subtitle mb-2 text-muted">Directed by ' + film.director + '</h6>' +
+                                '<p class="card-text">' + film.description + '</p>' +
+                                '<p class="average-rating">Average rating: ' + film.average_rating + '</p>' +
+                                '</div>');
+                        });
+                    },
+                    error: function(response) {
+                        // Handle an error
+                        alert('An error occurred');
+                    }
+                });
+            });
+        });
+        </script>
+</head>
+<body>
+    <div class="container">
+        <div class="d-flex justify-content-center">
+            <!-- Sidebar -->
+            <div class="" style="position: fixed; left: 0; height: 100vh; background-color: white;">
+                <a href="/add_film/" class="list-group-item list-group-item-action">add Film</a>
+                <a href="/me/" class="list-group-item list-group-item-action">Show Your Profile</a>
+                current_user: {{ current_user }}
+            </div>
+            <!-- Main content -->
+            <div class="col-md-3">
+                <h2><center>All Films</center></h2>
+                {% for film in films %}
+                    <div class="card mt-4">
+                        <div class="card-body">
+                            <form class="ajax-form-watch" method="POST" action="wanna_watch/{{film.id}}/" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary">Wanna watch</button>
+                            </form> 
+                            <h5 class="card-title">{{ film.title }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">Directed by {{ film.director }}</h6>
+                            <p class="card-text">{{ film.description }}</p>
+                            <p class="card-text"><small class="text-muted">Year: {{ film.year }}</small></p>
+                            <p class="card-text"><small class="text-muted average-rating">Average rating: {{ film.average_rating }}</small></p>
+                            <p class="card-text"><small class="text-muted">Suggested by: {{ film.added_by }}</small></p>
+                            <p class="card-text"><small class="text-muted">Users who already watched: {% for user in film.users_watched.all %}{{ user.username }}{% if not forloop.last %}, {% endif %}{% endfor %}</small></p>
+                            <p class="card-text "><small class="text-muted users-want-to-watch">Users who want to watch: {% for user in film.users_want_to_watch.all %}{{ user.username }}{% if not forloop.last %}, {% endif %}{% endfor %}</small></p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="col-md-3">
+                    <h2><center>Watched by you</center></h2>
+                    {% for w_film in watched_films %}
+                    <div class="card mt-4">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ w_film.title }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">Directed by {{ w_film.director }}</h6>
+                            <p class="card-text">{{ w_film.description }}</p>
+                            <p class="card-text"><small class="text-muted">Year: {{ w_film.year }}</small></p>
+                            <p class="card-text average-rating"><small class="text-muted">Average rating: {{ w_film.average_rating }}</small></p>
+                            <p class="card-text"><small class="text-muted">Suggested by: {{ w_film.added_by }}</small></p>
+                        </div>
+                        <form class="ajax-form" method="POST" action="rate_film/{{film.id}}/" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="number" name="rating" id="rating" min="1" max="10">
+                            <button type="submit" class="btn btn-primary">Rate</button>
+                        </form> 
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="col-md-3">
+                <h2><center>Added by you</center></h2>
+                {% for a_film in added_films %}
+                    <div class="card mt-4">
+                        <div class="card-body">
+                            <a href="edit_film/{{a_film.id}}"><button class="btn btn-primary">Edit</button></a>
+                            <a href="delete_film/{{a_film.id}}"><button class="btn btn-secondary">delete</button></a>
+                            <h5 class="card-title">{{ a_film.title }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">Directed by {{ a_film.director }}</h6>
+                            <p class="card-text">{{ a_film.description }}</p>
+                            <p class="card-text"><small class="text-muted">Year: {{ a_film.year }}</small></p>
+                            <p class="card-text average-rating"><small class="text-muted">Average rating: {{ a_film.average_rating }}</small></p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="col-md-3">
+                <h2><center>Watchlist</center></h2>
+                <div class="card mt-4" id="watchlist">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

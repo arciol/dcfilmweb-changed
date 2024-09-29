@@ -1,0 +1,49 @@
+{% extends 'index.html' %}
+{% block title %}
+    Dashboard
+{% endblock %}
+{% block subtitle %}
+    Ostatnio dodane filmy, statystyki, itp.
+{% endblock %}
+
+{% block tabelka %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            DataTable Example
+        </div>
+        <div class="card-body">
+            <table id="datatablesSimple">
+                <thead>
+                    <tr>
+                        <th>Tytuł</th>
+                        <th>Gatunek</th>
+                        <th>Proponuje</th>
+                        <th>Chętni</th>
+                        <th>Obejrzeli</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Tytuł</th>
+                        <th>Gatunek</th>
+                        <th>Proponuje</th>
+                        <th>Chętni</th>
+                        <th>Obejrzeli</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    {% for film in films %}
+                    <tr>
+                        <td>{{ film.title }}</td>
+                        <td>{{ film.category }}</td>
+                        <td>{{ film.added_by }}</td>
+                        <td>{% if film.want_to_watch.all %}{{ film.want_to_watch.all|join:", " }}{% else %}-{% endif %}</td>
+                        <td>{% if film.watched.all %}{{ film.watched.all|join:", " }}{% else %}-{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
