@@ -1,20 +1,46 @@
 {% extends 'index.html' %}
 {% load bootstrap %}
+
+{% block title %}
+Zaproponuj film do obejrzenia
+{% endblock %}
+
+{% block subtitle %}
+    Wpisz swoją propozycję
+{% endblock %}
+
 {% block content %}
     <div class="col-xl-6">
         <div class="card mb-4">
             <div class="card-header">
                 <i class="fas fa-chart-bar me-1"></i>
-                Zaproponuj film do obejrzenia
             </div>
             <div class="card-body">
-                <form method="POST" enctype="multipart/form-data">
+                <form method="POST">
                     {% csrf_token %}
                     <div class="form-group">
-                        {{ form|bootstrap }}
+                      <label for="title">Title</label>
+                      <input type="text" class="form-control" id="title" name="title" placeholder="Enter title" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Zatwierdź</button>
-                </form>
+                  
+                    <div class="form-group">
+                      <label for="year">Year</label>
+                      <input type="text" class="form-control" id="year" name="year" placeholder="Enter year" required>
+                    </div>
+                  
+                    <div class="form-group">
+                      <label for="director">Director</label>
+                      <input type="text" class="form-control" id="director" name="director" placeholder="Enter director" required>
+                    </div>
+                  
+                    <div class="form-group">
+                      <label for="description">Description</label>
+                      <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter description" required></textarea>
+                      <br>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </form>
+                  
             </div>
         </div>
     </div>

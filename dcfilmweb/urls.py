@@ -29,8 +29,10 @@ urlpatterns = [
     path("add_film/", films.views.film_add, name="add_film"),
     path("edit_film/<int:id>/", films.views.film_edit, name="edit_film"),
     path("delete_film/<int:id>/", films.views.film_delete, name="delete_film"),
-    path("rate_film/<int:id>/", films.views.film_rate, name="rate_film"),
-    path("wanna_watch/<int:id>/", films.views.wanna_watch, name="wanna_watch"),
+    # path("rate_film/<int:id>/", films.views.film_rate, name="rate_film"),
+    path("wanna_watch/", films.views.wanna_watch_film, name="wanna_watch_films"),
+    path("watched/<int:id>/", films.views.watched, name="watched"),
+    path("want_to_watch_film/<int:id>/", films.views.want_to_watch_film, name="want_to_watch_film"),
     path("admin/", admin.site.urls),
     path("oauth2/login/", discordlogin.views.discord_login, name="oauth2_login"),
     path(

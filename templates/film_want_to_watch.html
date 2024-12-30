@@ -1,6 +1,6 @@
 {% extends 'index.html' %}
 {% block title %}
-    Filmy
+    Wybierz film do obejrzenia
 {% endblock %}
 {% block subtitle %}
     Wszysktie discordowe propozycje
@@ -16,6 +16,8 @@
             <table id="datatablesSimple">
                 <thead>
                     <tr>
+                        <th>Obejrzano</th>
+                        <th>Obejrzyj</th>
                         <th>Tytuł</th>
                         <th>Gatunek</th>
                         <th>Proponuje</th>
@@ -25,6 +27,8 @@
                 </thead>
                 <tfoot>
                     <tr>
+                        <th>Obejrzano</th>
+                        <th>Obejrzyj</th>
                         <th>Tytuł</th>
                         <th>Gatunek</th>
                         <th>Proponuje</th>
@@ -35,6 +39,18 @@
                 <tbody>
                     {% for film in films %}
                     <tr>
+                        <td>
+                            <form method="post" action="{% url 'watched' film.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary">O</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form method="post" action="{% url 'want_to_watch_film' film.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary">X</button>
+                            </form>
+                        </td>
                         <td>{{ film.title|safe }}</td>
                         <td>{{ film.category }}</td>
                         <td>{{ film.added_by }}</td>

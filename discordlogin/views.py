@@ -68,6 +68,8 @@ def logout_view(request):
 
 
 def user_data(request):
-    user = DiscordUser.objects.get(user_id=request.user)
-    print(user.avatar, user.id)
+    try:
+        user = DiscordUser.objects.get(user_id=request.user)
+    except DiscordUser.DoesNotExist:
+        user = User.objects.get(id=request.user.id)
     return render(request, "user_data.html", {"user": user})
